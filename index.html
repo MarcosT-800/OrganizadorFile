@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organizador de Arquivos</title>
+</head>
+<body>
+  <h2>Organizador de Arquivos</h2>
+  <label for="fileInput">Selecione o arquivo de texto desorganizado:</label>
+  <input type="file" id="fileInput" accept=".txt"><br><br>
+  
+  <label for="separatorInput">Separador utilizado no arquivo de texto (ex: ','):</label>
+  <input type="text" id="separatorInput" value=","><br><br>
+  
+  <label for="outputFileName">Nome do arquivo de saída (sem extensão):</label>
+  <input type="text" id="outputFileName" value="dados_organizados"><br><br>
+  
+  <button onclick="organizeFile()">Organizar Arquivo</button>
+
+  <p id="statusMessage"></p>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.4/xlsx.full.min.js"></script>
+  <script>
+    function organizeFile() {
+      var fileInput = document.getElementById('fileInput');
+      var separatorInput = document.getElementById('separatorInput').value;
+      var outputFileName = document.getElementById('outputFileName').value;
+      var statusMessage = document.getElementById('statusMessage');
+      
+      var file = fileInput.files[0];
+      if (!file) {
+        statusMessage.textContent = "Nenhum arquivo selecionado.";
+        return;
+      }
+
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var text = e.target.result;
+        var lines = text.split('\n').map(line => line.trim());
+        var data = lines.map(line => line.split(separatorInput));
+
+        var wb = XLSX.utils.book_new();
+        var ws = XLSX.utils.aoa_to_sheet(data);
+        XLSX.utils.book_append_sheet(wb, ws, outputFileName);
+        XLSX.writeFile(wb, outputFileName + ".xlsx");
+
+        statusMessage.textContent = "Arquivo organizado foi salvo em " + outputFileName + ".xlsx";
+      };
+      reader.readAsText(file);
+    }
+  </script>
+</body>
+</html>
