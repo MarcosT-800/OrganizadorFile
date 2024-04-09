@@ -40,9 +40,14 @@
         var lines = text.split('\n').map(line => line.trim());
         var data = lines.map(line => line.split(separatorInput));
 
+        // Criar planilha
         var wb = XLSX.utils.book_new();
         var ws = XLSX.utils.aoa_to_sheet(data);
+
+        // Adicionar a planilha ao arquivo
         XLSX.utils.book_append_sheet(wb, ws, outputFileName);
+
+        // Salvar o arquivo Excel
         XLSX.writeFile(wb, outputFileName + ".xlsx");
 
         statusMessage.textContent = "Arquivo organizado foi salvo em " + outputFileName + ".xlsx";
